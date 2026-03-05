@@ -1,0 +1,37 @@
+/* src/styles/theme.css */
+@theme {
+  /* Cores da marca */
+  --color-brand-primary: #6A040F;
+  --color-brand-primary-hover: #9D0208;
+  --color-brand-primary-medium: #7B0F1A;
+  
+  --color-secondary: #E9C46A;
+  --color-secondary-hover: #F4D58D;
+  --color-secondary-dark: #C6A74A;
+
+  /* Backgrounds */
+  --color-background-base: #121212;
+  --color-background-card: #1E1E1E;
+  --color-background-input: #2A2A2A;
+  --color-background-modal: #2A2A2A;
+  --color-background-drawer: #161616;
+
+  /* Textos */
+  --color-text-primary: #F5F5F5;
+  --color-text-secondary: #A0A0A0;
+  --color-text-accent: #E9C46A;
+
+  /* Bordas e sombras */
+  --color-border-subtle: rgba(233, 196, 106, 0.2);
+  
+  /* Tipografia */
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Bordas arredondadas */
+  --radius-card: 12px;
+  --radius-button: 16px;
+
+  /* Sombras */
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
