@@ -39,10 +39,11 @@ export interface Produto {
     descricao: string;
     preco: number;
     imagemUrl: string | null;
+    restauranteId: string;  // ← ADICIONADO
     categoria: {
         id: string;
         nome: string;
-    };
+    } | null;
 }
 
 export interface Pedido {
@@ -54,4 +55,15 @@ export interface Pedido {
         id: string;
         nome: string;
     };
+}
+
+export interface AuthResponse {
+    user: {
+        id: string;
+        email: string;
+        nome: string;
+        role: string;
+    };
+    accessToken: string;
+    refreshToken: string;
 }
