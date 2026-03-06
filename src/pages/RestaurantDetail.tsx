@@ -150,8 +150,8 @@ export const RestaurantDetail: React.FC = () => {
                                     key={categoria}
                                     onClick={() => setCategoriaAtiva(categoria)}
                                     className={`px-4 py-2 rounded-button whitespace-nowrap transition-colors ${categoriaAtiva === categoria
-                                            ? 'bg-secondary text-background-base font-medium'
-                                            : 'bg-background-card text-text-secondary hover:bg-background-input'
+                                        ? 'bg-secondary text-background-base font-medium'
+                                        : 'bg-background-card text-text-secondary hover:bg-background-input'
                                         }`}
                                 >
                                     {categoria === 'todos' ? 'Todos' : categoria}

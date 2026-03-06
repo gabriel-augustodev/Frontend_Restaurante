@@ -4,6 +4,8 @@ import { CartProvider } from './contexts/cart/CartProvider';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { RestaurantDetail } from './pages/RestaurantDetail';
+import { Checkout } from './pages/Checkout';
+import { PedidoSucesso } from './pages/PedidoSucesso'; // ← NOVA IMPORTAÇÃO
 
 function App() {
   return (
@@ -13,8 +15,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/restaurante/:id" element={<RestaurantDetail />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/pedido-sucesso" element={<PedidoSucesso />} /> {/* ← NOVA ROTA */}
         </Routes>
-        {/* ⚠️ REMOVA O FloatingCart DAQUI - ele já está dentro do RestaurantDetail */}
       </CartProvider>
     </AuthProvider>
   );

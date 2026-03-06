@@ -47,7 +47,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
                         preco: produto.preco,
                         quantidade: 1,
                         observacoes,
-                        imagemUrl: produto.imagemUrl
+                        imagemUrl: produto.imagemUrl,
+                        restauranteId: produto.restauranteId
                     }];
                 }
                 return prev;
@@ -74,7 +75,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
                 preco: produto.preco,
                 quantidade: 1,
                 observacoes,
-                imagemUrl: produto.imagemUrl
+                imagemUrl: produto.imagemUrl,
+                restauranteId: produto.restauranteId
             }];
         });
     }, [restauranteId]);

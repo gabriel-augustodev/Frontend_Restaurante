@@ -8,6 +8,7 @@ export interface CartItem {
     quantidade: number;
     observacoes?: string;
     imagemUrl?: string | null;
+    restauranteId: string; // ← ADICIONE ESTA LINHA
 }
 
 export interface CartContextData {
