@@ -1,6 +1,7 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { useNavigate } from 'react-router-dom';
 
 interface RestaurantCardProps {
     id: string;
@@ -19,11 +20,10 @@ export const RestaurantCard: React.FC<RestaurantCardProps> = ({
     deliveryTime,
     deliveryFee
 }) => {
+    const navigate = useNavigate();
+
     const handleViewMenu = () => {
-        // Aqui você pode navegar para a página do restaurante
-        console.log('Ver cardápio do restaurante:', id);
-        // Exemplo de navegação futura:
-        // navigate(`/restaurante/${id}`);
+        navigate(`/restaurante/${id}`);
     };
 
     return (

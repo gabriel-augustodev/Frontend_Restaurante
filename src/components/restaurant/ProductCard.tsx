@@ -8,6 +8,7 @@ interface ProductCardProps {
     description: string;
     price: number;
     image?: string;
+    onAddToCart?: () => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -15,10 +16,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     name,
     description,
     price,
-    image
+    image,
+    onAddToCart
 }) => {
     return (
-        <div className="bg-background-card rounded-card shadow-card p-4 flex gap-4">
+        <div
+            className="bg-background-card rounded-card shadow-card p-4 flex gap-4"
+            data-product-id={id} // Usando o id aqui
+        >
             {image && (
                 <img
                     src={image}
@@ -41,7 +46,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                     <Button
                         variant="primary"
                         size="sm"
-                        onClick={() => console.log('Adicionar produto:', id)}
+                        onClick={onAddToCart}
                     >
                         <Plus className="w-4 h-4 mr-1" />
                         Adicionar

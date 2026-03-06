@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { RestaurantCard } from '../components/restaurant/RestaurantCard';
 import { Button } from '../components/ui/Button';
 import { Search } from 'lucide-react';
@@ -6,6 +7,7 @@ import { restauranteService } from '../services/restauranteService';
 import type { Restaurante } from '../services/api';
 
 export const Home: React.FC = () => {
+    const navigate = useNavigate();
     const [restaurantes, setRestaurantes] = useState<Restaurante[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -35,13 +37,26 @@ export const Home: React.FC = () => {
             {/* Header */}
             <header className="bg-brand-primary py-4 px-6 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <h1 className="font-display text-2xl font-bold text-text-primary">
+                    <h1
+                        className="font-display text-2xl font-bold text-text-primary cursor-pointer hover:text-secondary transition-colors"
+                        onClick={() => navigate('/')}
+                    >
                         Gourmet<span className="text-secondary">Dash</span>
                     </h1>
 
                     <div className="flex items-center gap-4">
-                        <Button variant="outline">Entrar</Button>
-                        <Button variant="primary">Cadastrar</Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => navigate('/login')}
+                        >
+                            Entrar
+                        </Button>
+                        <Button
+                            variant="primary"
+                            onClick={() => navigate('/login?mode=register')}
+                        >
+                            Cadastrar
+                        </Button>
                     </div>
                 </div>
             </header>
@@ -94,7 +109,7 @@ export const Home: React.FC = () => {
                                     id={restaurante.id}
                                     name={restaurante.nome}
                                     image={restaurante.imagemUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400'}
-                                    rating={4.5} // Você pode adicionar rating depois
+                                    rating={4.5}
                                     deliveryTime={`${restaurante.tempoMedioEntrega || '30-45'}`}
                                     deliveryFee={restaurante.taxaEntrega}
                                 />
