@@ -128,7 +128,7 @@ export const PedidoSucesso: React.FC = () => {
                             variant="outline"
                             size="lg"
                             className="w-full"
-                            onClick={() => navigate('/meus-pedidos')}
+                            onClick={() => navigate(`/pedido/${state.pedidoId}`)}
                         >
                             <Package className="w-5 h-5 mr-2" />
                             Acompanhar pedido

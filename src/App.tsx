@@ -6,6 +6,8 @@ import { Login } from './pages/Login';
 import { RestaurantDetail } from './pages/RestaurantDetail';
 import { Checkout } from './pages/Checkout';
 import { PedidoSucesso } from './pages/PedidoSucesso'; // ← NOVA IMPORTAÇÃO
+import { DetalhesPedido } from './pages/DetalhesPedido';
+import { MeusPedidos } from './pages/MeusPedidos';
 
 function App() {
   return (
@@ -16,7 +18,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/restaurante/:id" element={<RestaurantDetail />} />
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/pedido-sucesso" element={<PedidoSucesso />} /> {/* ← NOVA ROTA */}
+          <Route path="/pedido-sucesso" element={<PedidoSucesso />} />
+          <Route path="/meus-pedidos" element={<MeusPedidos />} />
+          <Route path="/pedido/:id" element={<DetalhesPedido />} />
         </Routes>
       </CartProvider>
     </AuthProvider>
