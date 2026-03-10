@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RestaurantCard } from '../components/restaurant/RestaurantCard';
 import { Button } from '../components/ui/Button';
-import { Search, User, Package, LogOut } from 'lucide-react';
+import { Search, User, Package, LogOut, Store } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { restauranteService } from '../services/restauranteService';
 import type { Restaurante } from '../services/api';
@@ -80,7 +80,7 @@ export const Home: React.FC = () => {
                                 {/* Dropdown menu */}
                                 {isMenuOpen && (
                                     <div
-                                        className="absolute right-0 mt-2 w-48 bg-background-card rounded-card shadow-card py-2 z-50 border border-border-subtle"
+                                        className="absolute right-0 mt-2 w-56 bg-background-card rounded-card shadow-card py-2 z-50 border border-border-subtle"
                                         onClick={(e) => e.stopPropagation()}
                                     >
                                         <div className="px-4 py-2 border-b border-border-subtle">
@@ -88,17 +88,47 @@ export const Home: React.FC = () => {
                                             <p className="text-text-secondary text-xs">{user.email}</p>
                                         </div>
 
+                                        {/* Opção Meu Perfil - PARA TODOS OS USUÁRIOS */}
                                         <button
                                             onClick={() => {
-                                                navigate('/meus-pedidos');
+                                                navigate('/perfil');
                                                 setIsMenuOpen(false);
                                             }}
                                             className="w-full px-4 py-3 text-left text-text-primary hover:bg-background-input flex items-center gap-2 transition-colors"
                                         >
-                                            <Package className="w-4 h-4 text-secondary" />
-                                            <span>Meus Pedidos</span>
+                                            <User className="w-4 h-4 text-secondary" />
+                                            <span>Meu Perfil</span>
                                         </button>
 
+                                        {/* Opção Meus Pedidos - APENAS PARA CLIENTES */}
+                                        {user.role === 'CLIENTE' && (
+                                            <button
+                                                onClick={() => {
+                                                    navigate('/meus-pedidos');
+                                                    setIsMenuOpen(false);
+                                                }}
+                                                className="w-full px-4 py-3 text-left text-text-primary hover:bg-background-input flex items-center gap-2 transition-colors"
+                                            >
+                                                <Package className="w-4 h-4 text-secondary" />
+                                                <span>Meus Pedidos</span>
+                                            </button>
+                                        )}
+
+                                        {/* Opção Painel do Restaurante - APENAS PARA DONOS */}
+                                        {user.role === 'DONO_RESTAURANTE' && (
+                                            <button
+                                                onClick={() => {
+                                                    navigate('/selecionar-restaurante');
+                                                    setIsMenuOpen(false);
+                                                }}
+                                                className="w-full px-4 py-3 text-left text-text-primary hover:bg-background-input flex items-center gap-2 transition-colors"
+                                            >
+                                                <Store className="w-4 h-4 text-secondary" />
+                                                <span>Painel do Restaurante</span>
+                                            </button>
+                                        )}
+
+                                        {/* Opção Sair - PARA TODOS */}
                                         <button
                                             onClick={handleLogout}
                                             className="w-full px-4 py-3 text-left text-text-primary hover:bg-background-input flex items-center gap-2 transition-colors border-t border-border-subtle mt-1"

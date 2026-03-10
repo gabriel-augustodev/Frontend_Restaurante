@@ -19,6 +19,7 @@ export interface PedidoResponse {
     subtotal: number;
     taxaEntrega: number;
     createdAt: string;
+    updatedAt: string;
     restaurante: {
         id: string;
         nome: string;

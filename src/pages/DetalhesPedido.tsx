@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useWebSocket } from '../hooks/useWebSocket';
 import { Button } from '../components/ui/Button';
 import { pedidoService, type PedidoResponse } from '../services/pedidoService';
 import {
@@ -9,10 +10,14 @@ import {
     Package,
     Store,
     Calendar,
-    AlertCircle
+    AlertCircle,
+    Bell
 } from 'lucide-react';
 
-const statusMessages = {
+// Tipo para os status do pedido
+type StatusPedido = 'AGUARDANDO_RESTAURANTE' | 'CONFIRMADO' | 'EM_PREPARO' | 'PRONTO' | 'SAIU_PARA_ENTREGA' | 'ENTREGUE' | 'CANCELADO';
+
+const statusMessages: Record<StatusPedido, string> = {
     AGUARDANDO_RESTAURANTE: 'Aguardando o restaurante confirmar seu pedido',
     CONFIRMADO: 'Pedido confirmado! Em breve começaremos o preparo',
     EM_PREPARO: 'Seu pedido está sendo preparado com muito cuidado',
@@ -22,6 +27,16 @@ const statusMessages = {
     CANCELADO: 'Pedido cancelado'
 };
 
+const statusColors: Record<StatusPedido, string> = {
+    AGUARDANDO_RESTAURANTE: 'text-yellow-500',
+    CONFIRMADO: 'text-blue-500',
+    EM_PREPARO: 'text-purple-500',
+    PRONTO: 'text-green-500',
+    SAIU_PARA_ENTREGA: 'text-orange-500',
+    ENTREGUE: 'text-green-600',
+    CANCELADO: 'text-red-500'
+};
+
 export const DetalhesPedido: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -29,6 +44,28 @@ export const DetalhesPedido: React.FC = () => {
     const [pedido, setPedido] = useState<PedidoResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [erro, setErro] = useState('');
+    const [notificacao, setNotificacao] = useState('');
+
+    // Conectar ao WebSocket para este pedido
+    const { status: socketStatus } = useWebSocket(id);
+
+    // Atualizar pedido quando receber novo status do WebSocket
+    useEffect(() => {
+        if (socketStatus && pedido && socketStatus !== pedido.status) {
+            setPedido(prev => prev ? { ...prev, status: socketStatus as StatusPedido } : null);
+
+            // Verificar se o status é uma chave válida
+            if (socketStatus in statusMessages) {
+                setNotificacao(`Status atualizado: ${statusMessages[socketStatus as StatusPedido]}`);
+            } else {
+                setNotificacao(`Status atualizado: ${socketStatus}`);
+            }
+
+            // Limpar notificação após 5 segundos
+            const timer = setTimeout(() => setNotificacao(''), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [socketStatus, pedido]);
 
     useEffect(() => {
         if (!user) {
@@ -103,6 +140,14 @@ export const DetalhesPedido: React.FC = () => {
                 </div>
             </header>
 
+            {/* Notificação em tempo real */}
+            {notificacao && (
+                <div className="fixed top-20 left-1/2 -translate-x-1/2 bg-secondary text-background-base px-6 py-3 rounded-button shadow-card flex items-center gap-3 animate-slideDown z-50">
+                    <Bell className="w-5 h-5" />
+                    <p className="font-medium">{notificacao}</p>
+                </div>
+            )}
+
             <div className="max-w-3xl mx-auto px-6 py-8">
                 {/* Status do pedido */}
                 <div className="bg-background-card rounded-card shadow-card p-6 mb-6">
@@ -114,15 +159,14 @@ export const DetalhesPedido: React.FC = () => {
                     </div>
 
                     <div className={`p-4 rounded-card ${pedido.status === 'CANCELADO'
-                        ? 'bg-red-500/10 border border-red-500'
-                        : 'bg-secondary/10 border border-secondary'
+                            ? 'bg-red-500/10 border border-red-500'
+                            : 'bg-secondary/10 border border-secondary'
                         }`}>
-                        <p className={`text-lg font-medium ${pedido.status === 'CANCELADO' ? 'text-red-500' : 'text-secondary'
-                            }`}>
+                        <p className={`text-lg font-medium ${statusColors[pedido.status as StatusPedido]}`}>
                             {pedido.status === 'CANCELADO' ? '❌ Cancelado' : '✅ Ativo'}
                         </p>
                         <p className="text-text-secondary mt-2">
-                            {statusMessages[pedido.status]}
+                            {statusMessages[pedido.status as StatusPedido]}
                         </p>
                     </div>
                 </div>

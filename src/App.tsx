@@ -8,6 +8,9 @@ import { Checkout } from './pages/Checkout';
 import { PedidoSucesso } from './pages/PedidoSucesso'; // ← NOVA IMPORTAÇÃO
 import { DetalhesPedido } from './pages/DetalhesPedido';
 import { MeusPedidos } from './pages/MeusPedidos';
+import { RestauranteDashboard } from './pages/RestauranteDashboard';
+import { SelecionarRestaurante } from './pages/SelecionarRestaurante';
+import { Perfil } from './pages/Perfil/Perfil';
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
           <Route path="/pedido-sucesso" element={<PedidoSucesso />} />
           <Route path="/meus-pedidos" element={<MeusPedidos />} />
           <Route path="/pedido/:id" element={<DetalhesPedido />} />
+          <Route path="/selecionar-restaurante" element={<SelecionarRestaurante />} />
+          <Route path="/restaurante-dashboard/:id" element={<RestauranteDashboard />} />
+          <Route path="/perfil" element={<Perfil />} />
         </Routes>
       </CartProvider>
     </AuthProvider>

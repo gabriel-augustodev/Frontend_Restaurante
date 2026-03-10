@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useWebSocket } from '../hooks/useWebSocket';
 import { Button } from '../components/ui/Button';
 import { pedidoService, type PedidoResponse } from '../services/pedidoService';
 import {
@@ -11,10 +12,19 @@ import {
     Home,
     AlertCircle,
     ChevronRight,
-    RefreshCw
+    RefreshCw,
+    Bell
 } from 'lucide-react';
 
-const statusConfig = {
+type StatusPedido = 'AGUARDANDO_RESTAURANTE' | 'CONFIRMADO' | 'EM_PREPARO' | 'PRONTO' | 'SAIU_PARA_ENTREGA' | 'ENTREGUE' | 'CANCELADO';
+
+const statusConfig: Record<StatusPedido, {
+    label: string;
+    color: string;
+    bgColor: string;
+    icon: React.ElementType;
+    step: number;
+}> = {
     AGUARDANDO_RESTAURANTE: {
         label: 'Aguardando confirmação',
         color: 'text-yellow-500',
@@ -73,16 +83,13 @@ export const MeusPedidos: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [erro, setErro] = useState('');
+    const [notificacao, setNotificacao] = useState<{ id: string; mensagem: string } | null>(null);
 
-    useEffect(() => {
-        if (!user) {
-            navigate('/login');
-            return;
-        }
-        carregarPedidos();
-    }, [user]);
+    // Conectar ao WebSocket (sem ID específico, só para receber atualizações globais)
+    const { status: socketStatus, ultimaAtualizacao } = useWebSocket();
 
-    const carregarPedidos = async () => {
+    // Função para carregar pedidos
+    const carregarPedidos = useCallback(async () => {
         try {
             setLoading(true);
             const data = await pedidoService.listarMeus();
@@ -96,7 +103,36 @@ export const MeusPedidos: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    // Atualizar pedido específico quando receber atualização do WebSocket
+    useEffect(() => {
+        if (socketStatus && pedidos.length > 0) {
+            // Mostrar notificação
+            setNotificacao({
+                id: Date.now().toString(),
+                mensagem: '🔄 Um pedido foi atualizado!'
+            });
+
+            // Recarregar pedidos
+            setRefreshing(true);
+            carregarPedidos().finally(() => {
+                setRefreshing(false);
+            });
+
+            // Limpar notificação após 3 segundos
+            const timer = setTimeout(() => setNotificacao(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [socketStatus, carregarPedidos, pedidos.length]);
+
+    useEffect(() => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+        carregarPedidos();
+    }, [user, carregarPedidos]);
 
     const handleRefresh = async () => {
         setRefreshing(true);
@@ -116,7 +152,7 @@ export const MeusPedidos: React.FC = () => {
     };
 
     const getStatusConfig = (status: string) => {
-        return statusConfig[status as keyof typeof statusConfig] || statusConfig.AGUARDANDO_RESTAURANTE;
+        return statusConfig[status as StatusPedido] || statusConfig.AGUARDANDO_RESTAURANTE;
     };
 
     if (loading) {
@@ -153,6 +189,14 @@ export const MeusPedidos: React.FC = () => {
                 </div>
             </header>
 
+            {/* Notificação em tempo real */}
+            {notificacao && (
+                <div className="fixed top-20 left-1/2 -translate-x-1/2 bg-secondary text-background-base px-6 py-3 rounded-button shadow-card flex items-center gap-3 animate-slideDown z-50">
+                    <Bell className="w-5 h-5" />
+                    <p className="font-medium">{notificacao.mensagem}</p>
+                </div>
+            )}
+
             <div className="max-w-7xl mx-auto px-6 py-8">
                 {erro && (
                     <div className="mb-6 bg-brand-primary/10 border border-brand-primary rounded-card p-4">
@@ -177,7 +221,7 @@ export const MeusPedidos: React.FC = () => {
                             return (
                                 <div
                                     key={pedido.id}
-                                    className="bg-background-card rounded-card shadow-card p-6 hover:scale-[1.01] transition-transform cursor-pointer"
+                                    className="bg-background-card rounded-card shadow-card p-6 hover:scale-[1.01] transition-transform cursor-pointer relative overflow-hidden"
                                     onClick={() => navigate(`/pedido/${pedido.id}`)}
                                 >
                                     {/* Cabeçalho do pedido */}
@@ -247,6 +291,19 @@ export const MeusPedidos: React.FC = () => {
                         })}
                     </div>
                 )}
+
+                {/* Indicador de conexão WebSocket */}
+                <div className="mt-8 text-center">
+                    <div className="inline-flex items-center gap-2 text-xs text-text-secondary">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span>Conectado em tempo real</span>
+                        {ultimaAtualizacao && (
+                            <span className="text-text-secondary ml-2">
+                                Última atualização: {ultimaAtualizacao.toLocaleTimeString()}
+                            </span>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );

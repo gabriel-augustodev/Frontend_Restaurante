@@ -2,6 +2,7 @@ export interface User {
     id: string;
     email: string;
     nome: string;
+    telefone?: string;
     role: string;
 }
 
